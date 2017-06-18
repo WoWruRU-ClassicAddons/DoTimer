@@ -7,6 +7,90 @@
 -- right now the abbreviations mean nothing; they might in a future patch
 
 DoTimer_SpellData = { --a list of textures (same in all locales!) and the english name equivilents.  used to free the chore of localizing the spell names.  also provides the average duration and the second/minute multiplier
+	["WARRIOR"] = {
+		["Interface\\Icons\\Ability_Gouge"] = {
+			["name"] = "Rend",
+			["duration"] = 21,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_Warrior_Sunder"] = {
+			["name"] = "Sunder Armor",
+			["duration"] = 30,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_Warrior_WarCry"] = {
+			["name"] = "Demoralizing Shout",
+			["duration"] = 30,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Nature_ThunderClap"] = {
+			["name"] = "Thunder Clap",
+			["duration"] = 30,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Nature_Reincarnation"] = {
+			["name"] = "Taunt",
+			["duration"] = 3,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_ShockWave"] = {
+			["name"] = "Hamstring",
+			["duration"] = 15,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_Warrior_Disarm"] = {
+			["name"] = "Disarm",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Shadow_DeathScream"] = {
+			["name"] = "Piercing Howl",
+			["duration"] = 6,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_GolemThunderClap"] = {
+			["name"] = "Intimidating Shout",
+			["duration"] = 8,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Ability_Warrior_SavageBlow"] = {
+			["name"] = "Mortal Strike",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+	},
+	["PALADIN"] = {
+		["Interface\\Icons\\Spell_Holy_RighteousnessAura"] = {
+			["name"] = "Judgement of Wisdom",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_HealingAura"] = {
+			["name"] = "Judgement of Light",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_TurnUndead"] = {
+			["name"] = "Turn Undead",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_SealOfMight"] = {
+			["name"] = "Hammer of Justice",
+			["duration"] = 3,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_HolySmite"] = {
+			["name"] = "Judgement of the Crusader",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_PrayerOfHealing"] = {
+			["name"] = "Repentance",
+			["duration"] = 6,
+			["multiplier"] = 1,
+		},
+	},
 	["WARLOCK"] = {
 		["Interface\\Icons\\Spell_Shadow_CurseOfTounges"] = {
 			["name"] = "Curse of Tongues",
@@ -104,6 +188,11 @@ DoTimer_SpellData = { --a list of textures (same in all locales!) and the englis
 		["Interface\\Icons\\Spell_Shadow_GrimWard"] = {
 			["name"] = "Curse of Exhaustion",
 			["duration"] = 12,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Shadow_ScourgeBuild"] = {
+			["name"] = "Shadowburn",
+			["duration"] = 5,
 			["multiplier"] = 1,
 		},
 		["Interface\\Icons\\Spell_Shadow_BurningSpirit"] = {
@@ -326,11 +415,75 @@ DoTimer_SpellData = { --a list of textures (same in all locales!) and the englis
 			["multiplier"] = 1,
 		},
 	},
+	["SHAMAN"] = {
+		["Interface\\Icons\\Spell_Nature_StrengthOfEarthTotem02"] = {
+			["name"] = "Earthbind",
+			["duration"] = 5,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Fire_FlameShock"] = {
+			["name"] = "Flame Shock",
+			["duration"] = 12,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Arcane_Blink"] = {
+			["name"] = "Focused Casting",
+			["duration"] = 6,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Frost_FrostShock"] = {
+			["name"] = "Frost Shock",
+			["duration"] = 8,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Nature_GroundingTotem"] = {
+			["name"] = "Grounding Totem Effect",
+			["duration"] = 10,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Nature_HealingWay"] = {
+			["name"] = "Healing Way",
+			["duration"] = 15,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Frost_SummonWaterElemental"] = {
+			["name"] = "Mana Tide Totem",
+			["duration"] = 12,
+			["multiplier"] = 1,
+		},
+		["Interface\\Icons\\Spell_Holy_SealOfMight"] = {
+			["name"] = "Stormstrike",
+			["duration"] = 12,
+			["multiplier"] = 1,
+		},
+	},
 }
 
 function DoTimer_DefineSpells(class) --creates the lists of spells to watch for for each class.  also defines their aliases for when i implement them.  DO NOT make the names not english!! i look for english names.  only mess with the abbreviations
 	local spells,petspells,healspells,enslavespells = {},{},{},{}
-	if class == "WARLOCK" then
+	if class == "WARRIOR" then
+		spells = {
+			["Rend"] = 1,
+			["Sunder Armor"] = 1,
+			["Demoralizing Shout"] = 1,
+			["Thunder Clap"] = 1,
+			["Taunt"] = 1,
+			["Hamstring"] = 1,
+			["Disarm"] = 1,
+			["Piercing Howl"] = 1,
+			["Intimidating Shout"] = 1,
+			["Mortal Strike"] = 1,
+		}
+	elseif class == "PALADIN" then
+		spells = {
+			["Judgement of Wisdom"] = 1,
+			["Judgement of Light"] = 1,
+			["Turn Undead"] = 1,
+			["Hammer of Justice"] = 1,
+			["Judgement of the Crusader"] = 1,
+			["Repentance"] = 1,			
+		}
+	elseif class == "WARLOCK" then
 		spells = {
 			["Curse of Agony"] = 1,
 			["Curse of Exhaustion"] = 1,
@@ -347,6 +500,7 @@ function DoTimer_DefineSpells(class) --creates the lists of spells to watch for 
 			["Fear"] = 1,
 			["Howl of Terror"] = 1,
 			["Death Coil"] = 1,
+			["Shadowburn"] = 1,
 		}
 		petspells = {
 			["Seduction"] = 1,
@@ -412,6 +566,19 @@ function DoTimer_DefineSpells(class) --creates the lists of spells to watch for 
 			["Polymorph"] = 1,
 			["Polymorph: Pig"] = 1,
 			["Polymorph: Turtle"] = 1,
+		}
+	elseif class == "SHAMAN" then
+		spells = {
+			["Earthbind"] = 1,
+			["Flame Shock"] = 1,
+			["Focused Casting"] = 1,
+			["Frost Shock"] = 1,
+			["Grounding Totem Effect"] = 1,
+			["Mana Tide Totem"] = 1,
+			["Stormstrike"] = 1,
+		}
+		healspells = {
+			["Healing Way"] = 1,
 		}
 	end
 	return spells,petspells,healspells,enslavespells
