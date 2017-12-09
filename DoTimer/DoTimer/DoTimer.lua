@@ -4,8 +4,8 @@
 
 DoTimer_Settings = {} --table for user-defined settings
 DoTimer_DebugChannel = nil --for debugging purposes
-local version = "1.1.5" --for the help command
-local date_uploaded = "November 29, 2011" --for the help command
+local version = GetAddOnMetadata("DoTimer", "Version") --for the help command
+local date_uploaded = GetAddOnMetadata("DoTimer", "X-Date") --for the help command
 local Old_CSBN,Old_CS,Old_UA,loaded,class,preventingimmol --random variables i use
 local lasttarget = {} --a table holding data for my last target
 local casted = {} --governs the currently casted debuffs.  entries are 1-10 targets, which in turn are 1-20 debuffs and the target name
@@ -38,24 +38,33 @@ local GHOST_ALPHA = .5 --amt. ghost timers are dimmed
 ------------------------------------------------------------------------------------------------------------
 
 function DoTimer_ReturnEnglish(spellname) --returns the english name of the spell
+--	DoTimer_Debug("DoTimer_ReturnEnglish")
 	local tables = {BOOKTYPE_SPELL,BOOKTYPE_PET}
 	local english,texture
 	for index,value in ipairs(tables) do
 		local i = 1
 		while GetSpellName(i,value) do
 			local spell = GetSpellName(i,value)
+	--		DoTimer_Debug("DoTimer_ReturnEnglish"..spell)
 			if spell == spellname then 
 				texture = GetSpellTexture(i,value)
+				--DoTimer_Debug("DoTimer_ReturnEnglishSPELL "..spell)
+				--DoTimer_Debug("DoTimer_ReturnEnglishTEXTURE "..texture)
 				break
 			end
 			i = i + 1
 		end
 	end
-	if texture and DoTimer_SpellData[class] and DoTimer_SpellData[class][texture] then return DoTimer_SpellData[class][texture].name end
+	if texture and DoTimer_SpellData[class] and DoTimer_SpellData[class][texture] then
+	--	DoTimer_Debug("DoTimer_ReturnEnglish 3")
+		return DoTimer_SpellData[class][texture].name 
+	end
+	--DoTimer_Debug("DoTimer_ReturnEnglish- unknown")
 	return "unknown"
 end
 
 function DoTimer_ToLocale(spellname) -- returns the localized name of the english spell
+--	DoTimer_Debug("DoTimer_ToLocale")
 	for index,value in pairs(DoTimer_SpellData[class]) do
 		if value.name == spellname then
 			local i = 1
@@ -180,6 +189,7 @@ function DoTimer_OnUpdate() --updating the timers onscreen, as well as checking 
 end
 
 function DoTimer_ScanDebuffs() --deletes the timers of spells which are no longer on the target
+	DoTimer_Debug("DoTimer_ScanDebuffs")
 	local unitids = {"target","pettarget"} --making use of both your target and your pet's target
 	for index,value in ipairs(unitids) do
 		local target,sex,level
@@ -223,6 +233,7 @@ function DoTimer_ScanDebuffs() --deletes the timers of spells which are no longe
 end
 
 function DoTimer_ScanBuffs() --checking buffs to see if any friendly spells need to be removed
+	DoTimer_Debug("DoTimer_ScanBuffs")
 	local unitids = {
 		"target",
 		"mouseover",
@@ -264,6 +275,7 @@ function DoTimer_ScanBuffs() --checking buffs to see if any friendly spells need
 end
 
 function DoTimer_DepreciateTimer(found,i) --depreciated the timer if the target is eligible
+	DoTimer_Debug("DoTimer_DepreciateTimer")
 	--if casted[found].eligible then DoTimer_AddText("The timers for "..casted[found].target.." are eligible for depreciation.") else DoTimer_AddText("The timers for "..casted[found].target.." are not eligible for depreciation.") end
 	if DoTimer_Settings.dep and (casted[found].eligible) and ((casted[found][i].displayed or 2) > 1) then
 		casted[found][i].dep = 1
@@ -276,6 +288,7 @@ function DoTimer_DepreciateTimer(found,i) --depreciated the timer if the target 
 end
 
 function DoTimer_CheckConflag()
+--	DoTimer_Debug("DoTimer_CheckConflag")
 	if DoTimer_ReturnEnglish(arg1) == "Conflagrate" then
 		local found = DoTimer_ReturnTargetTable(arg5.name,arg5.sex,arg5.level)
 		if found then
@@ -308,6 +321,7 @@ function DoTimer_CheckConflag()
 end
 
 function DoTimer_ChangedTargets()
+	DoTimer_Debug("DoTimer_ChangedTargets")
 	local newtarget
 	if UnitName("target") then newtarget = {UnitName("target"),UnitSex("target"),UnitLevel("target")} end
 	--DoTimer_AddText("flag1") --flag
@@ -417,6 +431,7 @@ function DoTimer_LeftCombat()
 end
 
 function DoTimer_DebuffFade()
+	DoTimer_Debug("DoTimer_DebuffFade")
 	local chatspell,chattarget = SpellSystem_ParseString(arg1,fadesmsg)
 	--we will delete the timer if 1) the target is our current target, and 2) there are now no occurrences of the debuff on the target
 	if DoTimer_intable(chatspell,spells) then --scan target for debuffs; if no more occurrences then we can delete that timer
@@ -455,6 +470,7 @@ function DoTimer_DebuffFade()
 end
 
 function DoTimer_RemoveTimer(targetindex,debuffindex,unforced) --deletes a timer onscreen from existence
+	DoTimer_Debug("DoTimer_RemoveTimer")
 	if unforced then 
 		DoTimer_Debug("a timer has been removed unforcibly")
 		if DoTimer_Settings.allghost and (DoTimer_TimerIsReal(targetindex,debuffindex) or casted[targetindex][debuffindex].dep) then DoTimer_CreateGhostTimer(targetindex,debuffindex) end
@@ -584,6 +600,7 @@ function DoTimer_ReturnTexture(spell) --returns the texture path for the icon of
 end
 
 function DoTimer_CreateSpellTimer(spelltable) --creates a timer onscreen from nothingness
+	DoTimer_Debug("DoTimer_CreateSpellTimer")
 	DoTimer_Debug("processing timer for "..spelltable.spell.." on "..spelltable.target)
 	--DoTimer_AddText(spell.." has been successfully cast on "..target..".")
 	local list = {spell = spelltable.spell, rank = spelltable.rank, texture = spelltable.texture, duration = spelltable.duration, time = GetTime(), type = spelltable.timertype, english = spelltable.english} --the table that governs debuff data
@@ -650,6 +667,7 @@ function DoTimer_PotentialSpellTimer()
 			}
 			table.insert(finalspell,finalspellentry)
 			if table.getn(finalspell) == 1 then 
+			DoTimer_Debug("spell success 2: "..arg1)
 				DoTimerPreTimerFrame:SetScript("OnUpdate",function() DoTimer_CheckPreTimers() end)
 				DoTimerIconFrame:SetScript("OnUpdate",function() DoTimer_AwaitIcon() end) 
 			end
@@ -693,14 +711,16 @@ function DoTimer_intable(query,checkedtable) --checks a spell to see if it needs
 end
 
 function DoTimer_ReturnDuration(spell,rank) --returns the duration of a spell
+	if DoTimer_ReturnTexture(spell) == "Interface\\Icons\\Spell_Nature_Reincarnation" or DoTimer_ReturnTexture(spell) == "Interface\\Icons\\Ability_Physical_Taunt" then
+		return 3 -- had to hard code since the Taunt tooltip doesn't contain it's duration //Reaper
+	end
 	local tables = {BOOKTYPE_SPELL,BOOKTYPE_PET}
+--	DoTimer_AddText("DoTimer_ReturnDuration")
 	for index,value in ipairs(tables) do
 		local i = 1
 		while GetSpellName(i,value) do
 			local spellname,spellrank = GetSpellName(i,value)
-			if spellname == "Taunt" then
-				return 3 -- had to hard code since the Taunt tooltip doesn't contain it's duration //Reaper
-			elseif spellname == spell and ((spellrank == rank) or (rank == "") or (value == BOOKTYPE_PET)) then
+			if spellname == spell and ((spellrank == rank) or (rank == "") or (value == BOOKTYPE_PET)) then
 				DoTimerScanningFrame:ClearLines()
 				DoTimerScanningFrame:SetSpell(i,value)
 				local num = DoTimerScanningFrame:NumLines()
@@ -714,6 +734,8 @@ function DoTimer_ReturnDuration(spell,rank) --returns the duration of a spell
 				for index2,value2 in ipairs(allnumbers) do
 					if ((not truenumber) or (math.abs(value2 - basenumber) < math.abs(truenumber - basenumber))) then truenumber = value2 end
 				end
+	--			DoTimer_AddText(truenumber)
+	--			DoTimer_AddText(multiplier)
 				return truenumber * multiplier
 			end
 			i = i + 1
